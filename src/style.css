@@ -1,0 +1,86 @@
+:root {
+  --bg: #030614;
+  --panel: #0b1230;
+  --accent: #2dd4bf;
+  --text: #eafff9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+h1 {
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+select,
+button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#radar-container svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.result-card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.avis-list {
+  list-style: none;
+  padding: 0;
+}
+
+.avis-list li {
+  border-top: 1px solid rgba(45, 212, 191, 0.2);
+  padding: 8px 0;
+}
+
+.error-banner {
+  background: #3b0d0d;
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 16px;
+}
