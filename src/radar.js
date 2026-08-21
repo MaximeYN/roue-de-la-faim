@@ -63,9 +63,9 @@ export function createRadar(container) {
 }
 
 function renderRadarMarkup() {
-  const blips = BLIP_ANGLES.map((angle, i) => {
+  const blips = BLIP_ANGLES.map((angle) => {
     const { x, y } = blipPosition(angle);
-    return `<circle class="radar-blip" data-index="${i}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#facc15" opacity="0.25"/>`;
+    return `<circle class="radar-blip" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#facc15" opacity="0.25"/>`;
   }).join("");
 
   return `

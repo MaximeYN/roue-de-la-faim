@@ -25,4 +25,12 @@ describe("parseCSV", () => {
   it("returns an empty array for empty input", () => {
     expect(parseCSV("")).toEqual([]);
   });
+
+  it("handles CRLF line endings", () => {
+    const result = parseCSV("a,b\r\n1,2\r\n3,4");
+    expect(result).toEqual([
+      { a: "1", b: "2" },
+      { a: "3", b: "4" },
+    ]);
+  });
 });

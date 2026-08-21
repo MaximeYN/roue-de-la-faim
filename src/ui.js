@@ -34,7 +34,7 @@ export function renderResultCard(container, restaurant, avisList) {
       <h2>${escapeHtml(restaurant.name)}</h2>
       <p class="cuisine">${escapeHtml(restaurant.cuisine || "Non renseigné")}</p>
       ${restaurant.phone ? `<p>${escapeHtml(restaurant.phone)}</p>` : ""}
-      ${restaurant.website ? `<p><a href="${escapeHtml(restaurant.website)}" target="_blank" rel="noopener">${escapeHtml(restaurant.website)}</a></p>` : ""}
+      ${safeWebsiteLink(restaurant.website)}
       ${restaurant.openingHours ? `<p>${escapeHtml(restaurant.openingHours)}</p>` : ""}
       ${mapsLink ? `<p>${mapsLink}</p>` : ""}
       ${avisHtml}
@@ -57,8 +57,23 @@ export function setScanButtonEnabled(buttonEl, enabled) {
   buttonEl.title = enabled ? "" : "Aucun resto pour ce type de cuisine";
 }
 
+const SCAN_DISABLED_MESSAGE = "Aucun resto pour ce type de cuisine.";
+
+export function renderScanHint(hintEl, enabled) {
+  hintEl.textContent = enabled ? "" : SCAN_DISABLED_MESSAGE;
+}
+
 function escapeHtml(value) {
   const div = document.createElement("div");
   div.textContent = value ?? "";
-  return div.innerHTML;
+  // .innerHTML alone does not escape `"` (only needed inside attribute values,
+  // never inside text-node serialization) — without this, a website value
+  // used in an href attribute could break out via a literal quote.
+  return div.innerHTML.replaceAll('"', "&quot;");
+}
+
+function safeWebsiteLink(website) {
+  if (!/^https?:\/\//i.test(website || "")) return "";
+  const safe = escapeHtml(website);
+  return `<p><a href="${safe}" target="_blank" rel="noopener">${safe}</a></p>`;
 }

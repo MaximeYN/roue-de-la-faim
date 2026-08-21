@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { renderCuisineOptions, renderResultCard, renderError, setScanButtonEnabled } from "../src/ui.js";
+import { renderCuisineOptions, renderResultCard, renderError, setScanButtonEnabled, renderScanHint } from "../src/ui.js";
 
 describe("renderCuisineOptions", () => {
   it("adds Tous first then the given tags", () => {
@@ -44,6 +44,30 @@ describe("renderResultCard", () => {
   });
 });
 
+describe("renderResultCard website link", () => {
+  const base = { name: "Resto", cuisine: "", phone: "", openingHours: "", lat: null, lon: null };
+
+  it("renders a safe http(s) website as a link", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { ...base, website: "https://example.com" }, []);
+    const link = container.querySelector("a[href]");
+    expect(link.getAttribute("href")).toBe("https://example.com");
+  });
+
+  it("drops a javascript: website instead of rendering it as a link", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { ...base, website: "javascript:alert(1)" }, []);
+    expect(container.querySelector("a[href]")).toBeNull();
+  });
+
+  it("does not allow a website value to break out of the href attribute", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { ...base, website: 'https://x.com/" onmouseover="alert(1)' }, []);
+    const link = container.querySelector("a[href]");
+    expect(link.getAttribute("onmouseover")).toBeNull();
+  });
+});
+
 describe("renderError", () => {
   it("renders the message and wires the retry button", () => {
     const container = document.createElement("div");
@@ -62,5 +86,15 @@ describe("setScanButtonEnabled", () => {
     expect(button.disabled).toBe(true);
     setScanButtonEnabled(button, true);
     expect(button.disabled).toBe(false);
+  });
+});
+
+describe("renderScanHint", () => {
+  it("shows a message when disabled and clears it when enabled", () => {
+    const hint = document.createElement("p");
+    renderScanHint(hint, false);
+    expect(hint.textContent).toBe("Aucun resto pour ce type de cuisine.");
+    renderScanHint(hint, true);
+    expect(hint.textContent).toBe("");
   });
 });

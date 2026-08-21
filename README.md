@@ -46,3 +46,7 @@ Netlify, branché sur ce repo : commande de build `npm run build`, dossier de pu
 - Pas de pondération du tirage par les notes (tirage uniforme).
 - Pas d'intégration carte/geocoding pour une adresse texte (le dataset OSM n'a que des coordonnées).
 - Pas d'écriture d'avis depuis l'app — ça reste géré par le Google Form.
+
+## Notes
+
+Si `npm run build` échoue localement avec une erreur du type `'L' n'est pas reconnu en tant que commande interne ou externe`, c'est que le chemin du dossier contient un caractère `&` qui perturbe l'invocation interne de `npm.cmd` sous Windows — sans rapport avec le projet. Contournement : `./node_modules/.bin/vite build` (ou déplacer le dossier vers un chemin sans `&`). Netlify (Linux) n'est pas concerné.
