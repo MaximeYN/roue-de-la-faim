@@ -1,5 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
-import { renderCuisineOptions, renderResultCard, renderError, setScanButtonEnabled, renderScanHint } from "../src/ui.js";
+import {
+  renderCuisineOptions,
+  renderResultCard,
+  renderError,
+  setScanButtonEnabled,
+  renderScanHint,
+  renderAlternates,
+} from "../src/ui.js";
 
 describe("renderCuisineOptions", () => {
   it("adds Tous first then the given tags", () => {
@@ -86,6 +93,38 @@ describe("setScanButtonEnabled", () => {
     expect(button.disabled).toBe(true);
     setScanButtonEnabled(button, true);
     expect(button.disabled).toBe(false);
+  });
+});
+
+describe("renderAlternates", () => {
+  const alternates = [
+    { name: "Loc Lac", cuisine: "vietnamese" },
+    { name: "L'Angolo", cuisine: "" },
+  ];
+
+  it("renders one button per alternate with name and cuisine", () => {
+    const container = document.createElement("div");
+    renderAlternates(container, alternates, vi.fn());
+    const buttons = container.querySelectorAll(".alternate-button");
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0].textContent).toContain("Loc Lac");
+    expect(buttons[0].textContent).toContain("vietnamese");
+    expect(buttons[1].textContent).toContain("L'Angolo");
+    expect(buttons[1].textContent).toContain("Non renseigné");
+  });
+
+  it("renders nothing when there are no alternates", () => {
+    const container = document.createElement("div");
+    renderAlternates(container, [], vi.fn());
+    expect(container.innerHTML).toBe("");
+  });
+
+  it("calls onSelect with the clicked alternate's index", () => {
+    const container = document.createElement("div");
+    const onSelect = vi.fn();
+    renderAlternates(container, alternates, onSelect);
+    container.querySelectorAll(".alternate-button")[1].click();
+    expect(onSelect).toHaveBeenCalledWith(1);
   });
 });
 

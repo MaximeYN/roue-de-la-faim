@@ -1,7 +1,13 @@
-export function pickWinner(restaurants) {
-  if (restaurants.length === 0) return null;
-  const index = Math.floor(Math.random() * restaurants.length);
-  return restaurants[index];
+// Fisher-Yates shuffle, then take the first `count` — gives up to `count`
+// distinct restaurants with no repeats, in random order. The first element
+// is the featured pick, the rest are the alternates.
+export function pickSelection(restaurants, count = 5) {
+  const shuffled = [...restaurants];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, count);
 }
 
 export function angularDistance(a, b) {

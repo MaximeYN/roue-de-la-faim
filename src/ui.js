@@ -42,6 +42,28 @@ export function renderResultCard(container, restaurant, avisList) {
   `;
 }
 
+export function renderAlternates(container, alternates, onSelect) {
+  if (alternates.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
+
+  container.innerHTML = `
+    <ul class="alternates-list">
+      ${alternates
+        .map(
+          (r, i) =>
+            `<li><button type="button" class="alternate-button" data-index="${i}">${escapeHtml(r.name)} — ${escapeHtml(r.cuisine || "Non renseigné")}</button></li>`
+        )
+        .join("")}
+    </ul>
+  `;
+
+  container.querySelectorAll(".alternate-button").forEach((button) => {
+    button.addEventListener("click", () => onSelect(Number(button.dataset.index)));
+  });
+}
+
 export function renderError(container, message, onRetry) {
   container.innerHTML = `
     <div class="error-banner">

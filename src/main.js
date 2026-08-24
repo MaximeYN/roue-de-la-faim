@@ -1,7 +1,16 @@
 import { fetchRestaurants, fetchAvis, getCuisineTags, filterByCuisine, joinAvis } from "./data.js";
-import { createRadar, pickWinner } from "./radar.js";
-import { renderCuisineOptions, renderResultCard, renderError, setScanButtonEnabled, renderScanHint } from "./ui.js";
+import { createRadar, pickSelection } from "./radar.js";
+import {
+  renderCuisineOptions,
+  renderResultCard,
+  renderAlternates,
+  renderError,
+  setScanButtonEnabled,
+  renderScanHint,
+} from "./ui.js";
 import "./style.css";
+
+const SELECTION_SIZE = 5;
 
 const RESTOS_CSV_URL = import.meta.env.VITE_RESTOS_CSV_URL;
 const AVIS_CSV_URL = import.meta.env.VITE_AVIS_CSV_URL;
@@ -11,11 +20,15 @@ const scanButton = document.querySelector("#scan-button");
 const scanHint = document.querySelector("#scan-hint");
 const radarContainer = document.querySelector("#radar-container");
 const resultContainer = document.querySelector("#result-container");
+const alternatesContainer = document.querySelector("#alternates-container");
 const errorContainer = document.querySelector("#error-container");
 
 let restaurants = [];
 let avis = [];
 let radar = null;
+// Featured pick at index 0, up to 4 alternates after it. Clicking an
+// alternate swaps it with index 0 and re-renders — no new radar spin.
+let selection = [];
 
 async function init() {
   errorContainer.innerHTML = "";
@@ -50,14 +63,25 @@ function updateScanAvailability() {
 
 function handleScan() {
   const filtered = filterByCuisine(restaurants, cuisineSelect.value);
-  const winner = pickWinner(filtered);
-  if (!winner) return;
+  selection = pickSelection(filtered, SELECTION_SIZE);
+  if (selection.length === 0) return;
 
   resultContainer.innerHTML = "";
+  alternatesContainer.innerHTML = "";
   scanButton.disabled = true;
   radar.start(() => {
-    renderResultCard(resultContainer, winner, joinAvis(winner, avis));
+    renderSelection();
     updateScanAvailability();
+  });
+}
+
+function renderSelection() {
+  const [featured, ...alternates] = selection;
+  renderResultCard(resultContainer, featured, joinAvis(featured, avis));
+  renderAlternates(alternatesContainer, alternates, (alternateIndex) => {
+    const selectionIndex = alternateIndex + 1;
+    [selection[0], selection[selectionIndex]] = [selection[selectionIndex], selection[0]];
+    renderSelection();
   });
 }
 

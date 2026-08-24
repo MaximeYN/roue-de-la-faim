@@ -47,3 +47,12 @@ Sources de données déjà en place, hors scope de ce spec :
 - Intégration carte/geocoding pour une vraie adresse texte.
 - Écriture d'avis directement depuis l'app (reste géré par le Google Form externe).
 - Blips représentant dynamiquement les restos filtrés réels.
+
+## Addendum — sélection multiple (proposition phare + alternatives)
+
+Ajouté après le v1 initial, suite à un retour utilisateur pendant le test en conditions réelles.
+
+- `pickSelection(restaurants, count = 5)` remplace `pickWinner` : tire jusqu'à 5 restos distincts (sans doublon, sans remise) dans la liste filtrée via un shuffle Fisher-Yates. Le tirage reste uniforme, cohérent avec le choix v1 de ne pas pondérer par les notes.
+- Le 1er élément est la **proposition phare** (carte complète : détails + avis, comme avant). Les 3 suivants sont des **alternatives** affichées en dessous (nom + cuisine).
+- Si le filtre donne moins de 5 restos, on affiche ce qu'il y a — pas de proposition inventée ou dupliquée pour compléter à 5.
+- Cliquer une alternative permute sa position avec la proposition phare (échange dans le tableau de sélection) et ré-affiche les deux zones. Pas de nouveau spin du radar — c'est un changement de mise en avant, pas un nouveau tirage.
