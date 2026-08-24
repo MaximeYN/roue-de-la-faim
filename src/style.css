@@ -42,7 +42,13 @@ h1 {
 .tagline {
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.9rem;
-  margin: 0 0 24px;
+  margin: 0 0 12px;
+}
+
+.weather {
+  color: var(--accent-soft);
+  font-size: 0.9rem;
+  margin: 0 0 20px;
 }
 
 .controls {

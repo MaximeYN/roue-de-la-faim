@@ -111,3 +111,9 @@ Pistes alternatives vérifiées et écartées, toutes gratuites :
 - Le dataset OSM lui-même n'inclut déjà que des tags `amenity=restaurant` actifs (un resto proprement re-tagué `disused:` par un contributeur disparaîtrait déjà de nos données) — mais la plupart des fermetures réelles ne sont jamais reflétées sur OSM du tout, dans un sens comme dans l'autre.
 
 Conclusion : aucune source gratuite et automatique fiable identifiée à ce stade. Piste restante et retenue pour plus tard si besoin : signalement manuel par les collègues via le Form existant ("Ce resto est fermé ?"), le seul signal réellement fiable (constat humain), mais qui ne corrige rien rétroactivement — non implémenté pour l'instant, décision explicite de ne pas construire cette fonctionnalité tant que le besoin ne se fait pas sentir en usage réel.
+
+## Addendum — météo
+
+Ajouté pour le POC : `src/weather.js` interroge Open-Meteo (gratuit, sans clé, CORS ouvert) sur les coordonnées d'origine déjà utilisées pour la distance. Table de correspondance code météo (WMO) → libellé français + icône emoji vérifiée contre la doc officielle Open-Meteo, pas devinée. Affiché sous le sous-titre : icône + libellé + température arrondie (ex. "☁️ Couvert · 23°C"). Non bloquant : un échec de l'appel météo n'affecte pas le reste de l'app (try/catch séparé du chargement des restos/avis, pas de bannière d'erreur pour ça).
+
+Deux autres pistes évoquées (Alim'confiance, "ouvert maintenant" via `opening_hours`) écartées pour l'instant à la demande du client — non implémentées.

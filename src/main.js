@@ -1,6 +1,7 @@
 import { fetchRestaurants, fetchAvis, getCuisineTags, filterByCuisine, joinAvis } from "./data.js";
 import { createRadar, pickSelection } from "./radar.js";
 import { haversineDistanceMeters, formatDistance } from "./geo.js";
+import { fetchWeather } from "./weather.js";
 import {
   renderCuisineOptions,
   renderResultCard,
@@ -8,6 +9,7 @@ import {
   renderError,
   setScanButtonEnabled,
   renderScanHint,
+  renderWeather,
 } from "./ui.js";
 import "./style.css";
 
@@ -26,6 +28,7 @@ const radarContainer = document.querySelector("#radar-container");
 const resultContainer = document.querySelector("#result-container");
 const alternatesContainer = document.querySelector("#alternates-container");
 const errorContainer = document.querySelector("#error-container");
+const weatherContainer = document.querySelector("#weather-container");
 
 let restaurants = [];
 let avis = [];
@@ -55,6 +58,13 @@ async function init() {
     scanButton.addEventListener("click", handleScan);
   } catch (error) {
     renderError(errorContainer, error.message, init);
+  }
+
+  // Decorative, not core — a weather hiccup shouldn't block the app itself.
+  try {
+    renderWeather(weatherContainer, await fetchWeather(ORIGIN.lat, ORIGIN.lon));
+  } catch {
+    renderWeather(weatherContainer, null);
   }
 }
 

@@ -1,3 +1,11 @@
+export function renderWeather(container, weather) {
+  if (!weather) {
+    container.innerHTML = "";
+    return;
+  }
+  container.innerHTML = `<p class="weather">${weather.icon} ${escapeHtml(weather.label)} · ${weather.temperature}°C</p>`;
+}
+
 export function renderCuisineOptions(selectEl, tags) {
   selectEl.innerHTML = "";
   const allOption = document.createElement("option");

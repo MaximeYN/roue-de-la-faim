@@ -6,7 +6,22 @@ import {
   setScanButtonEnabled,
   renderScanHint,
   renderAlternates,
+  renderWeather,
 } from "../src/ui.js";
+
+describe("renderWeather", () => {
+  it("shows the icon, label and temperature", () => {
+    const container = document.createElement("div");
+    renderWeather(container, { icon: "🌧️", label: "Pluie", temperature: 18 });
+    expect(container.querySelector(".weather").textContent).toBe("🌧️ Pluie · 18°C");
+  });
+
+  it("renders nothing when weather is unavailable", () => {
+    const container = document.createElement("div");
+    renderWeather(container, null);
+    expect(container.innerHTML).toBe("");
+  });
+});
 
 describe("renderCuisineOptions", () => {
   it("adds Tous first then the given tags", () => {
