@@ -1,6 +1,21 @@
 import { parseCSV } from "./csv.js";
 
 const NON_RENSEIGNE = "Non renseigné";
+const CLOSED_THRESHOLD_YEARS = 5;
+
+// Free/open-data-only heuristic for "probably still open": an OSM entry
+// untouched in 5+ years is excluded — no paid API involved (checked: SIRENE
+// cross-reference isn't viable, only 2/223 restaurants carry a siret).
+// Imprecise by nature — a stable restaurant nobody needed to correct can go
+// years without an edit and still be open — but it's the only free signal
+// available, and it matches the real closure pattern in a sector with high
+// turnover. Exported for testing with an injected `now`.
+export function isLikelyStillOpen(lastUpdateRaw, now = new Date()) {
+  const lastUpdate = new Date(lastUpdateRaw);
+  if (Number.isNaN(lastUpdate.getTime())) return true;
+  const ageYears = (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+  return ageYears < CLOSED_THRESHOLD_YEARS;
+}
 
 export function normalizeRestaurant(row) {
   const [lat, lon] = (row.meta_geo_point || "")
@@ -69,6 +84,7 @@ export async function fetchRestaurants(url) {
   // anywhere downstream (dropdown, tirage, alternates) — rather than a
   // display-only patch in each place a restaurant's name gets shown.
   return parseCSV(text)
+    .filter((row) => isLikelyStillOpen(row.meta_last_update))
     .map(normalizeRestaurant)
     .filter((r) => r.name.trim() !== "");
 }

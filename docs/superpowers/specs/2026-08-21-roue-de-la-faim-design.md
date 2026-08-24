@@ -97,6 +97,14 @@ Exploration à 3 directions (panneau structuré, masthead éditorial, hero centr
 
 Bug remonté en usage réel : la catégorie "Kebab" affichait une entrée dont le nom apparaissait comme "- kebab" dans la liste d'alternatives. Vérifié sur la vraie donnée : ce n'est pas un nom littéral, c'est un nom vide (`name: ""`) affiché via le gabarit `${nom} — ${cuisine}` de `renderAlternates`. Fix à la source plutôt qu'en affichage : `fetchRestaurants` (data.js) filtre désormais les lignes à nom vide après normalisation — exclu de partout (dropdown, tirage, alternatives) en un seul endroit. Sur la donnée réelle, ça retire 6 fiches sans nom sur 223 (217 restants).
 
+## Addendum — exclusion des restos probablement fermés
+
+Demande : ne garder que les restos probablement encore ouverts, avec uniquement des données gratuites/ouvertes (pas d'API Google payante).
+
+Piste écartée : croisement SIRET ↔ registre SIRENE (INSEE, gratuit officiel) pour vérifier le statut actif. Vérifié : seulement 2 restos sur 223 ont un SIRET renseigné dans les données OSM — trop rare pour être une solution générale. Une recherche par nom dans SIRENE serait possible mais fragile (rapprochement nom-commercial ↔ nom-légal-de-société non fiable) — non retenu.
+
+Piste retenue : `isLikelyStillOpen` (data.js) exclut les restos dont `meta_last_update` (dernière édition OSM) date de 5 ans ou plus — seul signal gratuit disponible. Heuristique imprécise par nature (un resto stable jamais corrigé peut être encore ouvert sans avoir été édité), documentée comme telle dans le code. Sur la donnée réelle : 44 restos sur 223 non touchés depuis 5+ ans. Combiné au filtre des noms vides : 174 restos restants sur 223 (~22% exclus au total) — à surveiller si ça s'avère trop agressif en usage réel.
+
 ## Arbitrage — pas d'enrichissement Google Places (horaires, avis publics)
 
 Décision explicite (à ne pas rejouer sans nouvelle info) : on reste sur les horaires OSM tels quels (incomplets par endroits, mais gratuits) et sur les avis internes des collègues, plutôt que d'ajouter Google Places API (Place Details) pour compléter les horaires manquants et récupérer des avis publics. Raisons : coût non vérifié pour les horaires, et pour les avis en plus un SKU plus cher (Enterprise + Atmosphere), une limite à ~5 avis par fiche, et des règles d'attribution/non-stockage prolongé dans les CGU Google. Introduirait une dépendance payante dans un projet jusqu'ici entièrement gratuit. À reconsidérer seulement si un vrai besoin se fait sentir.
