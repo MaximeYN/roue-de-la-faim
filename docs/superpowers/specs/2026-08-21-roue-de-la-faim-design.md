@@ -56,3 +56,9 @@ Ajouté après le v1 initial, suite à un retour utilisateur pendant le test en 
 - Le 1er élément est la **proposition phare** (carte complète : détails + avis, comme avant). Les 3 suivants sont des **alternatives** affichées en dessous (nom + cuisine).
 - Si le filtre donne moins de 5 restos, on affiche ce qu'il y a — pas de proposition inventée ou dupliquée pour compléter à 5.
 - Cliquer une alternative permute sa position avec la proposition phare (échange dans le tableau de sélection) et ré-affiche les deux zones. Pas de nouveau spin du radar — c'est un changement de mise en avant, pas un nouveau tirage.
+
+## Addendum — indicateur de distance
+
+- `src/geo.js` : `haversineDistanceMeters` (formule standard, sphère de rayon 6371 km) + `formatDistance` (arrondi à la dizaine de mètres sous 1 km, km avec une décimale au-delà).
+- Origine fixe codée dans `main.js` (coordonnées du point de départ, ex. bureau) : `48.892213, 2.29132`.
+- Affiché uniquement sur la carte phare (pas sur la liste d'alternatives), juste sous le type de cuisine. Absent si le resto n'a pas de coordonnées valides (cf. limitation OSM déjà documentée).

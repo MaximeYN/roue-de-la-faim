@@ -26,6 +26,18 @@ describe("renderResultCard", () => {
     expect(container.querySelector(".cuisine").textContent).toBe("korean");
   });
 
+  it("shows the distance label when provided", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, restaurant, [], "à 300 mètres");
+    expect(container.querySelector(".distance").textContent).toBe("à 300 mètres");
+  });
+
+  it("shows no distance element when the label is not provided", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, restaurant, []);
+    expect(container.querySelector(".distance")).toBeNull();
+  });
+
   it("shows a placeholder message when there are no avis", () => {
     const container = document.createElement("div");
     renderResultCard(container, restaurant, []);

@@ -1,5 +1,6 @@
 import { fetchRestaurants, fetchAvis, getCuisineTags, filterByCuisine, joinAvis } from "./data.js";
 import { createRadar, pickSelection } from "./radar.js";
+import { haversineDistanceMeters, formatDistance } from "./geo.js";
 import {
   renderCuisineOptions,
   renderResultCard,
@@ -11,6 +12,9 @@ import {
 import "./style.css";
 
 const SELECTION_SIZE = 5;
+
+// Fixed point of departure for the distance shown on the featured card.
+const ORIGIN = { lat: 48.892213, lon: 2.29132 };
 
 const RESTOS_CSV_URL = import.meta.env.VITE_RESTOS_CSV_URL;
 const AVIS_CSV_URL = import.meta.env.VITE_AVIS_CSV_URL;
@@ -77,12 +81,18 @@ function handleScan() {
 
 function renderSelection() {
   const [featured, ...alternates] = selection;
-  renderResultCard(resultContainer, featured, joinAvis(featured, avis));
+  renderResultCard(resultContainer, featured, joinAvis(featured, avis), distanceLabelFor(featured));
   renderAlternates(alternatesContainer, alternates, (alternateIndex) => {
     const selectionIndex = alternateIndex + 1;
     [selection[0], selection[selectionIndex]] = [selection[selectionIndex], selection[0]];
     renderSelection();
   });
+}
+
+function distanceLabelFor(restaurant) {
+  if (restaurant.lat === null || restaurant.lon === null) return null;
+  const meters = haversineDistanceMeters(ORIGIN.lat, ORIGIN.lon, restaurant.lat, restaurant.lon);
+  return formatDistance(meters);
 }
 
 init();

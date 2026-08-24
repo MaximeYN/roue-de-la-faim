@@ -13,7 +13,7 @@ export function renderCuisineOptions(selectEl, tags) {
   });
 }
 
-export function renderResultCard(container, restaurant, avisList) {
+export function renderResultCard(container, restaurant, avisList, distanceLabel) {
   const mapsLink =
     restaurant.lat !== null && restaurant.lon !== null
       ? `<a href="https://www.google.com/maps?q=${restaurant.lat},${restaurant.lon}" target="_blank" rel="noopener">Voir sur la carte</a>`
@@ -33,6 +33,7 @@ export function renderResultCard(container, restaurant, avisList) {
     <article class="result-card">
       <h2>${escapeHtml(restaurant.name)}</h2>
       <p class="cuisine">${escapeHtml(restaurant.cuisine || "Non renseigné")}</p>
+      ${distanceLabel ? `<p class="distance">${escapeHtml(distanceLabel)}</p>` : ""}
       ${restaurant.phone ? `<p>${escapeHtml(restaurant.phone)}</p>` : ""}
       ${safeWebsiteLink(restaurant.website)}
       ${restaurant.openingHours ? `<p>${escapeHtml(restaurant.openingHours)}</p>` : ""}

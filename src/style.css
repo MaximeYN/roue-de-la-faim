@@ -67,6 +67,11 @@ button:disabled {
   text-align: left;
 }
 
+.distance {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
 .avis-list {
   list-style: none;
   padding: 0;
