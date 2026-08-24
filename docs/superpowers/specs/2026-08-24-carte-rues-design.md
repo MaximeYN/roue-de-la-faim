@@ -38,3 +38,7 @@ Plus de pipeline n8n dédié, plus de nouvel onglet Google Sheet "Cartes", plus 
 
 - Pas de zoom/pan interactif — carte statique, taille fixe dans l'encart.
 - Pas de mise à jour automatique si le réseau de rues de Levallois change un jour (peu probable à l'échelle de ce POC) — régénération manuelle du fichier statique si besoin.
+
+## Implémenté
+
+`src/streetmap.js` + `src/levallois-streets.json` (339 tronçons, généré une fois via la requête Overpass décrite plus haut). Repère de départ fixe, repère resto réutilisant l'icône planète à anneaux du radar (extraite en `RINGED_PLANET_ICON`, partagée plutôt que dupliquée). Vérifié en direct : origine et deux vraies coordonnées de restos se projettent correctement dans le canvas 300×300. Build : 14,9 Ko gzip au total.
