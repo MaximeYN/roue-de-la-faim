@@ -66,7 +66,7 @@ Ajouté après le v1 initial, suite à un retour utilisateur pendant le test en 
 ## Addendum — retrait du téléphone, lien Google Maps
 
 - Le numéro de téléphone n'est plus affiché sur la carte (souvent absent ou mal formaté dans les données OSM) — la donnée reste dans le modèle (`restaurant.phone`), seul l'affichage est retiré.
-- Le lien carte pointe maintenant vers une recherche Google Maps combinant nom + coordonnées (`https://www.google.com/maps/search/?api=1&query=...`) plutôt qu'un simple pin sur les coordonnées (`?q=lat,lon`). C'est le format d'URL "Maps Search" de Google — public, documenté, sans clé API, sans rapport avec la limite Google Places API vue plus tôt (celle-ci concernait un appel d'API payant, pas un lien). Résultat généralement plus proche de la vraie fiche du resto (avis, photos, horaires Google) qu'un pin anonyme.
+- ~~Le lien carte pointe vers une recherche Google Maps combinant nom + coordonnées~~ — abandonné : échoue purement et simplement quand Google n'arrive pas à recouper le nom avec un lieu proche de ces coordonnées (constaté en usage réel sur "Itto" : "Impossible de trouver Itto 48.89...,2.29... dans Google Maps"). Remplacé par un lien d'itinéraire basé uniquement sur les coordonnées (`https://www.google.com/maps/dir/?api=1&destination=lat,lon`) — fonctionne toujours (pas de dépendance au matching par nom) et donne directement l'itinéraire plutôt qu'un résultat de recherche. Toujours le format d'URL "Maps URLs" de Google — public, documenté, sans clé API, sans rapport avec la limite Google Places API vue plus tôt.
 
 ## Addendum — charte graphique Yuri&Neil
 

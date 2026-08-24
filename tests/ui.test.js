@@ -70,16 +70,14 @@ describe("renderResultCard", () => {
 });
 
 describe("renderResultCard Google Maps link", () => {
-  it("links to a Maps search combining the restaurant name and coordinates", () => {
+  it("links to directions to the raw coordinates, not a name-based search", () => {
     const container = document.createElement("div");
     renderResultCard(container, { name: "Bap Time", cuisine: "", phone: "", website: "", openingHours: "", lat: 48.899, lon: 2.283 }, []);
     const links = [...container.querySelectorAll("a[href]")];
-    const mapsLink = links.find((a) => a.getAttribute("href").startsWith("https://www.google.com/maps/search/"));
+    const mapsLink = links.find((a) => a.getAttribute("href").startsWith("https://www.google.com/maps/dir/"));
     expect(mapsLink).toBeDefined();
-    expect(mapsLink.getAttribute("href")).toBe(
-      "https://www.google.com/maps/search/?api=1&query=Bap%20Time%2048.899%2C2.283"
-    );
-    expect(mapsLink.textContent).toBe("Voir sur Google Maps");
+    expect(mapsLink.getAttribute("href")).toBe("https://www.google.com/maps/dir/?api=1&destination=48.899,2.283");
+    expect(mapsLink.textContent).toBe("Itinéraire Google Maps");
   });
 
   it("renders no maps link when the restaurant has no coordinates", () => {

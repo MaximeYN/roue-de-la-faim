@@ -14,13 +14,15 @@ export function renderCuisineOptions(selectEl, tags) {
 }
 
 export function renderResultCard(container, restaurant, avisList, distanceLabel) {
-  // Name + coordinates as a single search query (not a bare "q=lat,lon" pin):
-  // Google's own matching generally resolves this to the actual place card
-  // (avis, photos, horaires Google) rather than an anonymous map pin. This is
-  // the free, key-less "Maps URLs" search action — not the paid Places API.
+  // Directions to the raw coordinates, not a name-based search: searching
+  // "name + coords" (tried first) fails outright when Google can't match the
+  // name to a listing near that point ("Impossible de trouver Itto ..." in
+  // practice) — coordinates alone always resolve, and give the itinerary
+  // directly instead of a search result. Free, key-less "Maps URLs"
+  // directions action — not the paid Places API.
   const mapsLink =
     restaurant.lat !== null && restaurant.lon !== null
-      ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.name} ${restaurant.lat},${restaurant.lon}`)}" target="_blank" rel="noopener">Voir sur Google Maps</a>`
+      ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${restaurant.lat},${restaurant.lon}" target="_blank" rel="noopener">Itinéraire Google Maps</a>`
       : "";
 
   const avisHtml =
