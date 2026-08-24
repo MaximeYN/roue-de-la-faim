@@ -108,6 +108,18 @@ button:disabled {
   margin: 0 auto;
 }
 
+#streetmap-container {
+  margin-top: 16px;
+}
+
+.streetmap-svg {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  background: transparent;
+}
+
 .result-card {
   background: var(--panel);
   border: 1px solid var(--border);

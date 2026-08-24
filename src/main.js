@@ -2,6 +2,7 @@ import { fetchRestaurants, fetchAvis, getCuisineTags, filterByCuisine, joinAvis 
 import { createRadar, pickSelection } from "./radar.js";
 import { haversineDistanceMeters, formatDistance } from "./geo.js";
 import { fetchWeather } from "./weather.js";
+import { createStreetMap } from "./streetmap.js";
 import {
   renderCuisineOptions,
   renderResultCard,
@@ -29,10 +30,14 @@ const resultContainer = document.querySelector("#result-container");
 const alternatesContainer = document.querySelector("#alternates-container");
 const errorContainer = document.querySelector("#error-container");
 const weatherContainer = document.querySelector("#weather-container");
+const streetmapContainer = document.querySelector("#streetmap-container");
 
 let restaurants = [];
 let avis = [];
 let radar = null;
+// Rendered once at startup (the map itself never changes) — only the resto
+// marker moves, via streetMap.setRestaurant(), on each reveal.
+const streetMap = createStreetMap(streetmapContainer, ORIGIN);
 // Featured pick at index 0, up to 4 alternates after it. Clicking an
 // alternate swaps it with index 0 and re-renders — no new radar spin.
 let selection = [];
@@ -92,6 +97,7 @@ function handleScan() {
 function renderSelection() {
   const [featured, ...alternates] = selection;
   renderResultCard(resultContainer, featured, joinAvis(featured, avis), distanceLabelFor(featured));
+  streetMap.setRestaurant(featured.lat, featured.lon);
   renderAlternates(alternatesContainer, alternates, (alternateIndex) => {
     const selectionIndex = alternateIndex + 1;
     [selection[0], selection[selectionIndex]] = [selection[selectionIndex], selection[0]];

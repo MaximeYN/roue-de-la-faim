@@ -111,16 +111,20 @@ export function createRadar(container) {
   return { start };
 }
 
+// Ringed-planet icon, shared with src/streetmap.js (the resto marker there
+// reuses this exact icon rather than duplicating it). Local coordinates
+// centered on (0,0); positioned via a `translate(x,y)` wrapper.
+export const RINGED_PLANET_ICON = `<circle r="5" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <ellipse rx="8.2" ry="2.6" transform="rotate(-18)" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <circle cx="-1.6" cy="-1.6" r="0.5" fill="#fbf192"/>
+   <circle cx="1.8" cy="1" r="0.5" fill="#fbf192"/>`;
+
 // Line-art planet icons matching the brand's space illustration style —
 // ringed (Saturn), wavy-terrain, 4-crater and hollow-crater variants,
 // cycled across the fixed blip positions. Drawn in local coordinates
 // centered on (0,0); positioned via a `translate(x,y)` wrapper.
 const PLANET_ICONS = [
-  // Ringed
-  `<circle r="5" fill="none" stroke="#fbf192" stroke-width="0.8"/>
-   <ellipse rx="8.2" ry="2.6" transform="rotate(-18)" fill="none" stroke="#fbf192" stroke-width="0.8"/>
-   <circle cx="-1.6" cy="-1.6" r="0.5" fill="#fbf192"/>
-   <circle cx="1.8" cy="1" r="0.5" fill="#fbf192"/>`,
+  RINGED_PLANET_ICON,
   // Wavy terrain
   `<circle r="6" fill="none" stroke="#fbf192" stroke-width="0.8"/>
    <path d="M-4 -1.8 Q-2 -3.4 0 -1.8 T4 -1.8" fill="none" stroke="#fbf192" stroke-width="0.7"/>
