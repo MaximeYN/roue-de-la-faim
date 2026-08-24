@@ -4,14 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>La Roue de la Faim</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <main>
       <h1>La Roue de la Faim</h1>
+      <p class="tagline">Où manger à Levallois quand on n'a pas d'idée</p>
       <div class="controls">
         <label for="cuisine-select">Type de cuisine</label>
-        <select id="cuisine-select"></select>
-        <button id="scan-button" type="button">Scanner</button>
+        <div class="control-row">
+          <select id="cuisine-select"></select>
+          <button id="scan-button" type="button">Scanner</button>
+        </div>
       </div>
       <p id="scan-hint" class="scan-hint"></p>
       <div id="radar-container"></div>

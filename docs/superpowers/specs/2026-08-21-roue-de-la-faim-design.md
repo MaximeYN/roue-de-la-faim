@@ -85,6 +85,14 @@ Bouton "Scanner" traité comme CTA plein (fond accent, texte sombre), cohérent 
 - Les 6 planètes ne sont plus alignées sur un même rayon : angle *et* distance au centre tirés aléatoirement à chaque création du radar (une fois par chargement de page), pour un rendu plus organique. Pas de logique anti-chevauchement entre les 6 points (`ponytail:` documenté dans le code) — à ajouter seulement si ça se révèle visuellement gênant en pratique.
 - Le faisceau tourne en continu même hors scan (rotation lente, ~9s/tour), avec le même effet de luminosité des planètes au passage qu'en mode scan. Au clic sur "Scanner", transition sans à-coup depuis l'angle courant vers le balayage rapide existant (3 tours, 2.6s, vitesse inchangée) ; une fois le résultat révélé, le radar reprend sa rotation lente depuis l'angle final — jamais de saut brusque d'angle entre les deux modes.
 
+## Addendum — refonte typographique du haut de l'app
+
+Exploration à 3 directions (panneau structuré, masthead éditorial, hero centré avec halo), chacune avec sa propre police via Google Fonts — comparées visuellement avant implémentation. Retenu : le titre + les contrôles en pilule de la direction "hero centré" (police Outfit, halo lumineux derrière le titre), avec le sous-titre de la direction "masthead éditorial" ("Où manger à Levallois quand on n'a pas d'idée"), unifié en Outfit plutôt que mélanger deux polices.
+
+- Police Outfit (Google Fonts) remplace `system-ui` comme police principale.
+- Dropdown et bouton "Scanner" alignés à la même hauteur (bug d'alignement du screenshot initial corrigé) — regroupés dans une rangée `.control-row` sous le label, lui-même redessiné en petit label discret (majuscules, espacé) plutôt que texte brut.
+- Contrôles en forme de pilule (`border-radius: 999px`) plutôt que rectangulaires, cohérent avec l'esthétique arrondie de la charte.
+
 ## Arbitrage — pas d'enrichissement Google Places (horaires, avis publics)
 
 Décision explicite (à ne pas rejouer sans nouvelle info) : on reste sur les horaires OSM tels quels (incomplets par endroits, mais gratuits) et sur les avis internes des collègues, plutôt que d'ajouter Google Places API (Place Details) pour compléter les horaires manquants et récupérer des avis publics. Raisons : coût non vérifié pour les horaires, et pour les avis en plus un SKU plus cher (Enterprise + Atmosphere), une limite à ~5 avis par fiche, et des règles d'attribution/non-stockage prolongé dans les CGU Google. Introduirait une dépendance payante dans un projet jusqu'ici entièrement gratuit. À reconsidérer seulement si un vrai besoin se fait sentir.
