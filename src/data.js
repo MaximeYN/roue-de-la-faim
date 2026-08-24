@@ -21,7 +21,7 @@ export function normalizeRestaurant(row) {
 export function normalizeAvis(row) {
   return {
     restaurantName: row.Restaurant || "",
-    auteur: row.Auteur || "",
+    auteur: row.Astronaute || "",
     note: row.Note || "",
     commentaire: row.Commentaire || "",
   };

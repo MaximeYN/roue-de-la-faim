@@ -30,7 +30,7 @@ describe("normalizeAvis", () => {
   it("maps the French Form headers", () => {
     const result = normalizeAvis({
       Restaurant: "Bap Time",
-      Auteur: "Max",
+      Astronaute: "Max",
       Note: "5",
       Commentaire: "Top",
     });
@@ -81,8 +81,8 @@ describe("joinAvis", () => {
   it("returns only avis matching the restaurant name", () => {
     const restaurant = normalizeRestaurant({ name: "Bap Time", cuisine: "korean" });
     const avis = [
-      normalizeAvis({ Restaurant: "Bap Time", Auteur: "Max", Note: "5", Commentaire: "Top" }),
-      normalizeAvis({ Restaurant: "Autre Resto", Auteur: "Yuri", Note: "3", Commentaire: "Bof" }),
+      normalizeAvis({ Restaurant: "Bap Time", Astronaute: "Max", Note: "5", Commentaire: "Top" }),
+      normalizeAvis({ Restaurant: "Autre Resto", Astronaute: "Yuri", Note: "3", Commentaire: "Bof" }),
     ];
     expect(joinAvis(restaurant, avis)).toEqual([avis[0]]);
   });
