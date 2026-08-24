@@ -135,6 +135,9 @@ button:disabled {
 #streetmap-container {
   flex-shrink: 0;
   width: clamp(180px, 32%, 340px);
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .streetmap-svg {
@@ -148,7 +151,9 @@ button:disabled {
     flex-direction: column;
   }
   #streetmap-container {
-    width: 100%;
+    width: 70%;
+    max-width: 260px;
+    margin: 0 auto;
   }
 }
 
