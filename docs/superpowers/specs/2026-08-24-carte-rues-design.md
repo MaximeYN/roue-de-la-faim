@@ -59,3 +59,15 @@ Plus de pipeline n8n dédié, plus de nouvel onglet Google Sheet "Cartes", plus 
 Retour utilisateur : la ligne droite ne convainc pas visuellement, il faut que le trait suive le tracé réel des rues. Nouveau `src/routing.js` : construit un graphe de marche à partir des mêmes tronçons déjà chargés (`levallois-streets.json`) — les points consécutifs d'une rue deviennent des nœuds reliés, et deux rues qui partagent une coordonnée exacte (une vraie intersection OSM) se retrouvent connectées à cet endroit, sans passe de détection séparée. Plus court chemin par Dijkstra (poids = distance haversine réelle), nœud de départ pré-calculé une fois (le point de départ ne bouge pas), nœud resto et chemin recalculés à chaque resto mis en phare.
 
 Vérifié sur les vraies données : 1494 nœuds uniques, graphe construit en ~11ms, calcul du chemin en ~4,5ms — imperceptible au moment du reveal, pas de lag notable. `ponytail:` Dijkstra en O(V²) (scan de tableau plutôt que tas de priorité) — largement suffisant pour ~2000 nœuds, à revoir seulement si la carte couvre un jour une zone bien plus grande.
+
+## Addendum — animation de zoom sur le trajet
+
+Demande : ne pas afficher toute la commune en permanence, zoomer sur juste ce qui est utile (le trajet départ→resto) pour que les restos proches restent lisibles.
+
+Point technique à gérer : zoomer bêtement tout le groupe SVG ferait grossir les traits de rue et l'icône planète avec le zoom — illisible à fort zoom. Séparation en deux couches :
+- **`.streetmap-viewport`** (rues + trajet en surbrillance) : c'est ce groupe qui est zoomé/animé. Épaisseur de trait maintenue constante via `vector-effect="non-scaling-stroke"` (attribut SVG standard).
+- **Repères (départ, resto)** : rendus *hors* du groupe zoomé, repositionnés (jamais mis à l'échelle) à chaque frame — taille de pin constante à l'écran quel que soit le niveau de zoom, comme sur une vraie carte.
+
+`computeZoomTarget(points)` : cadre le trajet (ou juste départ+resto si aucun chemin trouvé), avec un facteur de marge (×1.5), une distance de vue minimale (jamais plus serré qu'un certain seuil, pour éviter un cadrage absurde sur un resto juste à côté) et un zoom maximal plafonné. Animation par interpolation (ease-out cubique, 700ms) via `requestAnimationFrame`, même pattern que le radar — pas de transition CSS sur `viewBox` (peu fiable en animation).
+
+Vérifié sur de vraies données : resto proche (McDonald's) → zoom ×4,3 ; resto plus loin (B'bim) → zoom ×2,1. Comportement attendu confirmé.

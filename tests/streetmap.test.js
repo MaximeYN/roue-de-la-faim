@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeBounds, createProjection } from "../src/streetmap.js";
+import { computeBounds, createProjection, computeZoomTarget } from "../src/streetmap.js";
 
 describe("computeBounds", () => {
   it("finds the min/max lat/lon across all streets, with padding", () => {
@@ -49,5 +49,43 @@ describe("createProjection", () => {
       expect(y).toBeGreaterThanOrEqual(0);
       expect(y).toBeLessThanOrEqual(300);
     });
+  });
+});
+
+describe("computeZoomTarget", () => {
+  it("centers the padded bounding box of the given points on the view", () => {
+    const points = [
+      { x: 100, y: 100 },
+      { x: 200, y: 150 },
+    ];
+    const target = computeZoomTarget(points, 300);
+    expect(target.scale).toBeCloseTo(2, 5);
+    expect(target.tx).toBeCloseTo(-150, 5);
+    expect(target.ty).toBeCloseTo(-100, 5);
+    // The bbox center, transformed, must land exactly on the view's center.
+    const cx = 150 * target.scale + target.tx;
+    const cy = 125 * target.scale + target.ty;
+    expect(cx).toBeCloseTo(150, 5);
+    expect(cy).toBeCloseTo(150, 5);
+  });
+
+  it("never zooms in tighter than the minimum view span, even for near-identical points", () => {
+    const points = [
+      { x: 50, y: 50 },
+      { x: 50.01, y: 50.01 },
+    ];
+    const target = computeZoomTarget(points, 300);
+    // scale should reflect the MIN_VIEW_SPAN clamp (70), not the near-zero bbox.
+    expect(target.scale).toBeCloseTo(300 / 70, 1);
+  });
+
+  it("caps the scale so it never zooms in absurdly far", () => {
+    const points = [
+      { x: 50, y: 50 },
+      { x: 50.01, y: 50.01 },
+    ];
+    // A much larger viewSize would otherwise push scale well past a sane cap.
+    const target = computeZoomTarget(points, 1000);
+    expect(target.scale).toBe(6);
   });
 });
