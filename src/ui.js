@@ -14,9 +14,13 @@ export function renderCuisineOptions(selectEl, tags) {
 }
 
 export function renderResultCard(container, restaurant, avisList, distanceLabel) {
+  // Name + coordinates as a single search query (not a bare "q=lat,lon" pin):
+  // Google's own matching generally resolves this to the actual place card
+  // (avis, photos, horaires Google) rather than an anonymous map pin. This is
+  // the free, key-less "Maps URLs" search action — not the paid Places API.
   const mapsLink =
     restaurant.lat !== null && restaurant.lon !== null
-      ? `<a href="https://www.google.com/maps?q=${restaurant.lat},${restaurant.lon}" target="_blank" rel="noopener">Voir sur la carte</a>`
+      ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${restaurant.name} ${restaurant.lat},${restaurant.lon}`)}" target="_blank" rel="noopener">Voir sur Google Maps</a>`
       : "";
 
   const avisHtml =
@@ -34,7 +38,6 @@ export function renderResultCard(container, restaurant, avisList, distanceLabel)
       <h2>${escapeHtml(restaurant.name)}</h2>
       <p class="cuisine">${escapeHtml(restaurant.cuisine || "Non renseigné")}</p>
       ${distanceLabel ? `<p class="distance">${escapeHtml(distanceLabel)}</p>` : ""}
-      ${restaurant.phone ? `<p>${escapeHtml(restaurant.phone)}</p>` : ""}
       ${safeWebsiteLink(restaurant.website)}
       ${restaurant.openingHours ? `<p>${escapeHtml(restaurant.openingHours)}</p>` : ""}
       ${mapsLink ? `<p>${mapsLink}</p>` : ""}

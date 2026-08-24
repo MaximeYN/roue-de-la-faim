@@ -61,6 +61,33 @@ describe("renderResultCard", () => {
     expect(container.querySelector("img")).toBeNull();
     expect(container.querySelector(".avis-list li").textContent).toContain("<img");
   });
+
+  it("never renders a phone number, even when present", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { ...restaurant, phone: "+33 1 57 64 00 37" }, []);
+    expect(container.textContent).not.toContain("+33");
+  });
+});
+
+describe("renderResultCard Google Maps link", () => {
+  it("links to a Maps search combining the restaurant name and coordinates", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { name: "Bap Time", cuisine: "", phone: "", website: "", openingHours: "", lat: 48.899, lon: 2.283 }, []);
+    const links = [...container.querySelectorAll("a[href]")];
+    const mapsLink = links.find((a) => a.getAttribute("href").startsWith("https://www.google.com/maps/search/"));
+    expect(mapsLink).toBeDefined();
+    expect(mapsLink.getAttribute("href")).toBe(
+      "https://www.google.com/maps/search/?api=1&query=Bap%20Time%2048.899%2C2.283"
+    );
+    expect(mapsLink.textContent).toBe("Voir sur Google Maps");
+  });
+
+  it("renders no maps link when the restaurant has no coordinates", () => {
+    const container = document.createElement("div");
+    renderResultCard(container, { name: "Bap Time", cuisine: "", phone: "", website: "", openingHours: "", lat: null, lon: null }, []);
+    const links = [...container.querySelectorAll("a[href]")];
+    expect(links.some((a) => a.getAttribute("href").includes("google.com/maps"))).toBe(false);
+  });
 });
 
 describe("renderResultCard website link", () => {

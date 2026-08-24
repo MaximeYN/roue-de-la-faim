@@ -62,3 +62,8 @@ Ajouté après le v1 initial, suite à un retour utilisateur pendant le test en 
 - `src/geo.js` : `haversineDistanceMeters` (formule standard, sphère de rayon 6371 km) + `formatDistance` (arrondi à la dizaine de mètres sous 1 km, km avec une décimale au-delà).
 - Origine fixe codée dans `main.js` (coordonnées du point de départ, ex. bureau) : `48.892213, 2.29132`.
 - Affiché uniquement sur la carte phare (pas sur la liste d'alternatives), juste sous le type de cuisine. Absent si le resto n'a pas de coordonnées valides (cf. limitation OSM déjà documentée).
+
+## Addendum — retrait du téléphone, lien Google Maps
+
+- Le numéro de téléphone n'est plus affiché sur la carte (souvent absent ou mal formaté dans les données OSM) — la donnée reste dans le modèle (`restaurant.phone`), seul l'affichage est retiré.
+- Le lien carte pointe maintenant vers une recherche Google Maps combinant nom + coordonnées (`https://www.google.com/maps/search/?api=1&query=...`) plutôt qu'un simple pin sur les coordonnées (`?q=lat,lon`). C'est le format d'URL "Maps Search" de Google — public, documenté, sans clé API, sans rapport avec la limite Google Places API vue plus tôt (celle-ci concernait un appel d'API payant, pas un lien). Résultat généralement plus proche de la vraie fiche du resto (avis, photos, horaires Google) qu'un pin anonyme.
