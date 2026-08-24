@@ -32,38 +32,81 @@ export function blipPosition(angleDeg, radius = 80) {
   };
 }
 
-const BLIP_ANGLES = [40, 95, 160, 210, 260, 320];
+const BLIP_COUNT = 6;
 const SPIN_DURATION_MS = 2600;
 const ROTATIONS = 3;
+// Full rotation while idle (no scan running) — slow, ambient. Chosen by eye,
+// not derived from anything; adjust freely if it reads too fast/slow.
+const IDLE_ROTATION_PERIOD_MS = 9000;
+
+// Organic scatter: random angle *and* random distance from center, instead
+// of every planet sitting on the same ring. Kept clear of the center dot
+// and the outer ring so a planet's own ~6-8 unit icon radius doesn't clip
+// either boundary.
+// ponytail: no collision/overlap avoidance between the 6 random points —
+// with only 6 points spread across this much area, visible overlap is rare;
+// add spacing logic if it turns out to look bad in practice.
+function randomBlipConfigs(count = BLIP_COUNT) {
+  return Array.from({ length: count }, () => ({
+    angle: Math.random() * 360,
+    radius: 22 + Math.random() * 58,
+  }));
+}
 
 export function createRadar(container) {
-  container.innerHTML = renderRadarMarkup();
+  const blipConfigs = randomBlipConfigs();
+  container.innerHTML = renderRadarMarkup(blipConfigs);
   const beam = container.querySelector(".radar-beam");
   const blipEls = [...container.querySelectorAll(".radar-blip")];
 
+  let currentAngle = 0;
+  let rafId = null;
+  let lastIdleTime = null;
+
+  function setBeamAngle(angle) {
+    currentAngle = angle % 360;
+    beam.setAttribute("transform", `rotate(${currentAngle} 120 120)`);
+    blipEls.forEach((el, i) => {
+      const intensity = computeBlipIntensity(blipConfigs[i].angle, currentAngle);
+      el.setAttribute("opacity", String(0.25 + intensity * 0.75));
+    });
+  }
+
+  function idleFrame(now) {
+    if (lastIdleTime === null) lastIdleTime = now;
+    const delta = now - lastIdleTime;
+    lastIdleTime = now;
+    setBeamAngle(currentAngle + (delta / IDLE_ROTATION_PERIOD_MS) * 360);
+    rafId = requestAnimationFrame(idleFrame);
+  }
+
+  function resumeIdle() {
+    lastIdleTime = null;
+    rafId = requestAnimationFrame(idleFrame);
+  }
+
   function start(onComplete) {
+    if (rafId !== null) cancelAnimationFrame(rafId);
+    const startAngle = currentAngle;
     const startTime = performance.now();
 
     function frame(now) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / SPIN_DURATION_MS, 1);
-      const beamAngle = (progress * ROTATIONS * 360) % 360;
-      beam.setAttribute("transform", `rotate(${beamAngle} 120 120)`);
-
-      blipEls.forEach((el, i) => {
-        const intensity = computeBlipIntensity(BLIP_ANGLES[i], beamAngle);
-        el.setAttribute("opacity", String(0.25 + intensity * 0.75));
-      });
+      setBeamAngle(startAngle + progress * ROTATIONS * 360);
 
       if (progress < 1) {
-        requestAnimationFrame(frame);
+        rafId = requestAnimationFrame(frame);
       } else {
         onComplete();
+        resumeIdle();
       }
     }
 
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
+
+  resumeIdle();
 
   return { start };
 }
@@ -95,12 +138,14 @@ const PLANET_ICONS = [
    <circle cx="1.5" cy="2" r="0.5" fill="#fbf192"/>`,
 ];
 
-function renderRadarMarkup() {
-  const blips = BLIP_ANGLES.map((angle, index) => {
-    const { x, y } = blipPosition(angle);
-    const icon = PLANET_ICONS[index % PLANET_ICONS.length];
-    return `<g class="radar-blip" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" opacity="0.25">${icon}</g>`;
-  }).join("");
+function renderRadarMarkup(blipConfigs) {
+  const blips = blipConfigs
+    .map((config, index) => {
+      const { x, y } = blipPosition(config.angle, config.radius);
+      const icon = PLANET_ICONS[index % PLANET_ICONS.length];
+      return `<g class="radar-blip" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" opacity="0.25">${icon}</g>`;
+    })
+    .join("");
 
   return `
     <svg width="240" height="240" viewBox="0 0 240 240">
