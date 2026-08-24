@@ -68,24 +68,52 @@ export function createRadar(container) {
   return { start };
 }
 
+// Line-art planet icons matching the brand's space illustration style —
+// ringed (Saturn), wavy-terrain, 4-crater and hollow-crater variants,
+// cycled across the fixed blip positions. Drawn in local coordinates
+// centered on (0,0); positioned via a `translate(x,y)` wrapper.
+const PLANET_ICONS = [
+  // Ringed
+  `<circle r="5" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <ellipse rx="8.2" ry="2.6" transform="rotate(-18)" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <circle cx="-1.6" cy="-1.6" r="0.5" fill="#fbf192"/>
+   <circle cx="1.8" cy="1" r="0.5" fill="#fbf192"/>`,
+  // Wavy terrain
+  `<circle r="6" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <path d="M-4 -1.8 Q-2 -3.4 0 -1.8 T4 -1.8" fill="none" stroke="#fbf192" stroke-width="0.7"/>
+   <path d="M-4.5 1.6 Q-2 0 0 1.6 T4.5 1.6" fill="none" stroke="#fbf192" stroke-width="0.7"/>`,
+  // 4 craters
+  `<circle r="6" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <circle cx="-2.6" cy="-1.6" r="0.5" fill="#fbf192"/>
+   <circle cx="0.2" cy="-2.6" r="0.5" fill="#fbf192"/>
+   <circle cx="2.4" cy="0.4" r="0.5" fill="#fbf192"/>
+   <circle cx="-0.8" cy="2.2" r="0.5" fill="#fbf192"/>`,
+  // Hollow craters
+  `<circle r="6" fill="none" stroke="#fbf192" stroke-width="0.8"/>
+   <circle cx="-2" cy="0" r="1.1" fill="none" stroke="#fbf192" stroke-width="0.6"/>
+   <circle cx="1.8" cy="-1.8" r="0.7" fill="none" stroke="#fbf192" stroke-width="0.6"/>
+   <circle cx="1.5" cy="2" r="0.5" fill="#fbf192"/>`,
+];
+
 function renderRadarMarkup() {
-  const blips = BLIP_ANGLES.map((angle) => {
+  const blips = BLIP_ANGLES.map((angle, index) => {
     const { x, y } = blipPosition(angle);
-    return `<circle class="radar-blip" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#facc15" opacity="0.25"/>`;
+    const icon = PLANET_ICONS[index % PLANET_ICONS.length];
+    return `<g class="radar-blip" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" opacity="0.25">${icon}</g>`;
   }).join("");
 
   return `
     <svg width="240" height="240" viewBox="0 0 240 240">
       <defs>
         <linearGradient id="sweepGrad" gradientUnits="userSpaceOnUse" x1="120" y1="25" x2="167.5" y2="37.7">
-          <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#9df9ec" stop-opacity="0.85"/>
+          <stop offset="0%" stop-color="#fbf192" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#fff8be" stop-opacity="0.7"/>
         </linearGradient>
       </defs>
-      <circle cx="120" cy="120" r="95" fill="none" stroke="#2dd4bf" stroke-opacity="0.5" stroke-width="1.5"/>
-      <circle cx="120" cy="120" r="65" fill="none" stroke="#2dd4bf" stroke-opacity="0.3" stroke-width="1"/>
-      <circle cx="120" cy="120" r="35" fill="none" stroke="#2dd4bf" stroke-opacity="0.3" stroke-width="1"/>
-      <g stroke="#2dd4bf" stroke-opacity="0.25" stroke-width="1">
+      <circle cx="120" cy="120" r="95" fill="none" stroke="#fbf192" stroke-opacity="0.4" stroke-width="1.5"/>
+      <circle cx="120" cy="120" r="65" fill="none" stroke="#fbf192" stroke-opacity="0.25" stroke-width="1"/>
+      <circle cx="120" cy="120" r="35" fill="none" stroke="#fbf192" stroke-opacity="0.25" stroke-width="1"/>
+      <g stroke="#fbf192" stroke-opacity="0.2" stroke-width="1">
         <line x1="120" y1="25" x2="120" y2="215"/>
         <line x1="25" y1="120" x2="215" y2="120"/>
         <line x1="53" y1="53" x2="187" y2="187"/>
@@ -94,9 +122,9 @@ function renderRadarMarkup() {
       ${blips}
       <g class="radar-beam">
         <path d="M120,120 L120,25 A95,95 0 0,1 167.5,37.7 Z" fill="url(#sweepGrad)"/>
-        <line x1="120" y1="120" x2="167.5" y2="37.7" stroke="#eafff9" stroke-width="1.5"/>
+        <line x1="120" y1="120" x2="167.5" y2="37.7" stroke="#fff8be" stroke-width="1.5"/>
       </g>
-      <circle cx="120" cy="120" r="3" fill="#eafff9"/>
+      <circle cx="120" cy="120" r="3" fill="#fff8be"/>
     </svg>
   `;
 }

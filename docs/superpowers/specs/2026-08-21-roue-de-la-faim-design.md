@@ -68,6 +68,18 @@ Ajouté après le v1 initial, suite à un retour utilisateur pendant le test en 
 - Le numéro de téléphone n'est plus affiché sur la carte (souvent absent ou mal formaté dans les données OSM) — la donnée reste dans le modèle (`restaurant.phone`), seul l'affichage est retiré.
 - Le lien carte pointe maintenant vers une recherche Google Maps combinant nom + coordonnées (`https://www.google.com/maps/search/?api=1&query=...`) plutôt qu'un simple pin sur les coordonnées (`?q=lat,lon`). C'est le format d'URL "Maps Search" de Google — public, documenté, sans clé API, sans rapport avec la limite Google Places API vue plus tôt (celle-ci concernait un appel d'API payant, pas un lien). Résultat généralement plus proche de la vraie fiche du resto (avis, photos, horaires Google) qu'un pin anonyme.
 
+## Addendum — charte graphique Yuri&Neil
+
+Couleurs extraites par échantillonnage pixel précis (pas à l'œil) sur la charte graphique de l'entreprise (Google Slides) :
+- Fond quasi-noir `#0e0e0e` avec halo violet sombre `#291f36` (dégradé radial).
+- Accent jaune pâle : `#fbf192` (CTA, contours) et `#fff8be` (texte secondaire, cuisine).
+- Texte blanc pur.
+- Remplace l'ancienne palette cyan/teal (`#2dd4bf`) qui ne faisait pas partie de la charte.
+
+Blips radar remplacés par 4 icônes ligne fine reprenant le style des pictogrammes espace de la charte (trouvés slide 88, motif de fond répété) : planète à anneaux, planète à lignes ondulées, planète à 4 cratères pleins, planète à cratères creux — cyclées sur les positions fixes. La variante "planète souriante" (visage aux yeux fermés) a été écartée par choix.
+
+Bouton "Scanner" traité comme CTA plein (fond accent, texte sombre), cohérent avec le traitement des boutons d'action dans la charte (ex. "SATELLISEZ VOTRE MARQUE").
+
 ## Arbitrage — pas d'enrichissement Google Places (horaires, avis publics)
 
 Décision explicite (à ne pas rejouer sans nouvelle info) : on reste sur les horaires OSM tels quels (incomplets par endroits, mais gratuits) et sur les avis internes des collègues, plutôt que d'ajouter Google Places API (Place Details) pour compléter les horaires manquants et récupérer des avis publics. Raisons : coût non vérifié pour les horaires, et pour les avis en plus un SKU plus cher (Enterprise + Atmosphere), une limite à ~5 avis par fiche, et des règles d'attribution/non-stockage prolongé dans les CGU Google. Introduirait une dépendance payante dans un projet jusqu'ici entièrement gratuit. À reconsidérer seulement si un vrai besoin se fait sentir.
