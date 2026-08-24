@@ -1,5 +1,6 @@
 import streets from "./levallois-streets.json";
 import { RINGED_PLANET_ICON } from "./radar.js";
+import { buildGraph, nearestNode, findPath } from "./routing.js";
 
 const VIEW_SIZE = 300;
 const MARGIN = 16;
@@ -52,6 +53,9 @@ export function createProjection(bounds, viewSize = VIEW_SIZE, margin = MARGIN) 
 export function createStreetMap(container, origin) {
   const bounds = computeBounds(streets);
   const project = createProjection(bounds);
+  const graph = buildGraph(streets);
+  // Origin never moves — its nearest graph node is worth finding once.
+  const originNodeKey = nearestNode(graph, origin.lat, origin.lon);
 
   const streetLines = streets
     .map((street) => {
@@ -70,7 +74,7 @@ export function createStreetMap(container, origin) {
   container.innerHTML = `
     <svg viewBox="0 0 ${VIEW_SIZE} ${VIEW_SIZE}" class="streetmap-svg">
       <g>${streetLines}</g>
-      <line class="streetmap-path" x1="${originPoint.x.toFixed(1)}" y1="${originPoint.y.toFixed(1)}" x2="${originPoint.x.toFixed(1)}" y2="${originPoint.y.toFixed(1)}" stroke="#fff8be" stroke-width="1.5" stroke-dasharray="4 3" stroke-opacity="0.8" style="display:none"/>
+      <polyline class="streetmap-path" points="" fill="none" stroke="#fff8be" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" style="display:none"/>
       <circle cx="${originPoint.x.toFixed(1)}" cy="${originPoint.y.toFixed(1)}" r="4" fill="#fbf192"/>
       <circle cx="${originPoint.x.toFixed(1)}" cy="${originPoint.y.toFixed(1)}" r="7" fill="none" stroke="#fbf192" stroke-opacity="0.6" stroke-width="1"/>
       <g class="streetmap-resto" style="display:none"></g>
@@ -91,11 +95,23 @@ export function createStreetMap(container, origin) {
     restoGroup.innerHTML = RINGED_PLANET_ICON;
     restoGroup.style.display = "";
 
-    // Straight decorative line only — everything here is walking distance,
-    // and the real itinerary is one click away via the Google Maps link.
-    pathLine.setAttribute("x2", x.toFixed(1));
-    pathLine.setAttribute("y2", y.toFixed(1));
-    pathLine.style.display = "";
+    // Highlight the actual shortest walking route along the street graph —
+    // not a straight line. Real turn-by-turn stays on the Google Maps link;
+    // this is just showing the path visually follows real streets.
+    const restoNodeKey = nearestNode(graph, lat, lon);
+    const routeNodes = originNodeKey && restoNodeKey ? findPath(graph, originNodeKey, restoNodeKey) : null;
+    if (routeNodes) {
+      const routePoints = routeNodes
+        .map(([nodeLat, nodeLon]) => {
+          const point = project(nodeLat, nodeLon);
+          return `${point.x.toFixed(1)},${point.y.toFixed(1)}`;
+        })
+        .join(" ");
+      pathLine.setAttribute("points", routePoints);
+      pathLine.style.display = "";
+    } else {
+      pathLine.style.display = "none";
+    }
   }
 
   return { setRestaurant };

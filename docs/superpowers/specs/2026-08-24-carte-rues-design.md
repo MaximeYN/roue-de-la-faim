@@ -53,3 +53,9 @@ Plus de pipeline n8n dédié, plus de nouvel onglet Google Sheet "Cartes", plus 
 
 - `main` réélargi (640px → 960px, largeur fluide 94%) et colonne carte en `clamp(180px, 32%, 340px)` plutôt qu'une largeur fixe — s'adapte à la taille d'écran au lieu de rester cantonné à une bande étroite.
 - Ligne pointillée décorative entre le repère de départ et le repère resto, mise à jour à chaque changement de resto phare. Purement esthétique — pas de tracé routier réel (tout se fait à pied, l'itinéraire précis reste sur le lien Google Maps).
+
+## Addendum — le chemin suit vraiment les rues (pas à vol d'oiseau)
+
+Retour utilisateur : la ligne droite ne convainc pas visuellement, il faut que le trait suive le tracé réel des rues. Nouveau `src/routing.js` : construit un graphe de marche à partir des mêmes tronçons déjà chargés (`levallois-streets.json`) — les points consécutifs d'une rue deviennent des nœuds reliés, et deux rues qui partagent une coordonnée exacte (une vraie intersection OSM) se retrouvent connectées à cet endroit, sans passe de détection séparée. Plus court chemin par Dijkstra (poids = distance haversine réelle), nœud de départ pré-calculé une fois (le point de départ ne bouge pas), nœud resto et chemin recalculés à chaque resto mis en phare.
+
+Vérifié sur les vraies données : 1494 nœuds uniques, graphe construit en ~11ms, calcul du chemin en ~4,5ms — imperceptible au moment du reveal, pas de lag notable. `ponytail:` Dijkstra en O(V²) (scan de tableau plutôt que tas de priorité) — largement suffisant pour ~2000 nœuds, à revoir seulement si la carte couvre un jour une zone bien plus grande.
