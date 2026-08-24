@@ -100,3 +100,14 @@ Bug remonté en usage réel : la catégorie "Kebab" affichait une entrée dont l
 ## Arbitrage — pas d'enrichissement Google Places (horaires, avis publics)
 
 Décision explicite (à ne pas rejouer sans nouvelle info) : on reste sur les horaires OSM tels quels (incomplets par endroits, mais gratuits) et sur les avis internes des collègues, plutôt que d'ajouter Google Places API (Place Details) pour compléter les horaires manquants et récupérer des avis publics. Raisons : coût non vérifié pour les horaires, et pour les avis en plus un SKU plus cher (Enterprise + Atmosphere), une limite à ~5 avis par fiche, et des règles d'attribution/non-stockage prolongé dans les CGU Google. Introduirait une dépendance payante dans un projet jusqu'ici entièrement gratuit. À reconsidérer seulement si un vrai besoin se fait sentir.
+
+## Arbitrage — pas de filtre "resto fermé" (tenté puis annulé)
+
+Tenté : exclure les restos dont `meta_last_update` (OSM) date de 5 ans ou plus, comme proxy gratuit de fermeture probable. **Annulé** en usage réel : faux positif avéré sur McDonald's (dernière maj 2015, toujours ouvert) — une enseigne bien implantée n'a simplement aucune raison d'être ré-éditée sur OSM tant que rien ne change. Le heuristique produisait plus de faux positifs (chaînes stables jamais retouchées) que de vrais positifs utiles.
+
+Pistes alternatives vérifiées et écartées, toutes gratuites :
+- **SIRET/SIRENE** (déjà écarté ailleurs) : 2 restos sur 223 seulement ont un SIRET.
+- **`opening_hours`** : ne code que les jours de fermeture hebdomadaire ("Su off" = fermé le dimanche), pas les fermetures définitives — vérifié, aucun des 5 matches trouvés n'indique une vraie fermeture.
+- Le dataset OSM lui-même n'inclut déjà que des tags `amenity=restaurant` actifs (un resto proprement re-tagué `disused:` par un contributeur disparaîtrait déjà de nos données) — mais la plupart des fermetures réelles ne sont jamais reflétées sur OSM du tout, dans un sens comme dans l'autre.
+
+Conclusion : aucune source gratuite et automatique fiable identifiée à ce stade. Piste restante et retenue pour plus tard si besoin : signalement manuel par les collègues via le Form existant ("Ce resto est fermé ?"), le seul signal réellement fiable (constat humain), mais qui ne corrige rien rétroactivement — non implémenté pour l'instant, décision explicite de ne pas construire cette fonctionnalité tant que le besoin ne se fait pas sentir en usage réel.
