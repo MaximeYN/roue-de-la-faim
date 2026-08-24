@@ -101,6 +101,18 @@ describe("fetchRestaurants", () => {
     expect(result).toEqual([{ name: "Bap Time", cuisine: "korean", phone: "", website: "", openingHours: "", lat: 48.899, lon: 2.283 }]);
   });
 
+  it("drops rows with no name (confirmed real case: an unnamed kebab stall)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve("name,cuisine\nBap Time,korean\n,kebab"),
+      })
+    );
+    const result = await fetchRestaurants("https://example.com/restos.csv");
+    expect(result.map((r) => r.name)).toEqual(["Bap Time"]);
+  });
+
   it("throws a readable error on a non-ok response", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 500 }));
     await expect(fetchRestaurants("https://example.com/restos.csv")).rejects.toThrow("500");

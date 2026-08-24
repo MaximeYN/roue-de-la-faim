@@ -93,6 +93,10 @@ Exploration à 3 directions (panneau structuré, masthead éditorial, hero centr
 - Dropdown et bouton "Scanner" alignés à la même hauteur (bug d'alignement du screenshot initial corrigé) — regroupés dans une rangée `.control-row` sous le label, lui-même redessiné en petit label discret (majuscules, espacé) plutôt que texte brut.
 - Contrôles en forme de pilule (`border-radius: 999px`) plutôt que rectangulaires, cohérent avec l'esthétique arrondie de la charte.
 
+## Addendum — filtrage des restos sans nom
+
+Bug remonté en usage réel : la catégorie "Kebab" affichait une entrée dont le nom apparaissait comme "- kebab" dans la liste d'alternatives. Vérifié sur la vraie donnée : ce n'est pas un nom littéral, c'est un nom vide (`name: ""`) affiché via le gabarit `${nom} — ${cuisine}` de `renderAlternates`. Fix à la source plutôt qu'en affichage : `fetchRestaurants` (data.js) filtre désormais les lignes à nom vide après normalisation — exclu de partout (dropdown, tirage, alternatives) en un seul endroit. Sur la donnée réelle, ça retire 6 fiches sans nom sur 223 (217 restants).
+
 ## Arbitrage — pas d'enrichissement Google Places (horaires, avis publics)
 
 Décision explicite (à ne pas rejouer sans nouvelle info) : on reste sur les horaires OSM tels quels (incomplets par endroits, mais gratuits) et sur les avis internes des collègues, plutôt que d'ajouter Google Places API (Place Details) pour compléter les horaires manquants et récupérer des avis publics. Raisons : coût non vérifié pour les horaires, et pour les avis en plus un SKU plus cher (Enterprise + Atmosphere), une limite à ~5 avis par fiche, et des règles d'attribution/non-stockage prolongé dans les CGU Google. Introduirait une dépendance payante dans un projet jusqu'ici entièrement gratuit. À reconsidérer seulement si un vrai besoin se fait sentir.

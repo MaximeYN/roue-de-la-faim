@@ -64,7 +64,13 @@ export async function fetchRestaurants(url) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Échec du chargement des restaurants (${response.status})`);
   const text = await response.text();
-  return parseCSV(text).map(normalizeRestaurant);
+  // Some OSM entries have no name at all (confirmed on the live sheet — a
+  // "kebab" row with name ""). Filtered here, once, so they never show up
+  // anywhere downstream (dropdown, tirage, alternates) — rather than a
+  // display-only patch in each place a restaurant's name gets shown.
+  return parseCSV(text)
+    .map(normalizeRestaurant)
+    .filter((r) => r.name.trim() !== "");
 }
 
 export async function fetchAvis(url) {
