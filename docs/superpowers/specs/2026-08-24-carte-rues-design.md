@@ -42,3 +42,9 @@ Plus de pipeline n8n dédié, plus de nouvel onglet Google Sheet "Cartes", plus 
 ## Implémenté
 
 `src/streetmap.js` + `src/levallois-streets.json` (339 tronçons, généré une fois via la requête Overpass décrite plus haut). Repère de départ fixe, repère resto réutilisant l'icône planète à anneaux du radar (extraite en `RINGED_PLANET_ICON`, partagée plutôt que dupliquée). Vérifié en direct : origine et deux vraies coordonnées de restos se projettent correctement dans le canvas 300×300. Build : 14,9 Ko gzip au total.
+
+## Addendum — encart à deux colonnes, masqué avant le premier scan
+
+- L'encart résultat devient un seul bloc rectangulaire (`.result-layout`) contenant deux colonnes : infos texte à gauche (`#result-container`, layout inchangé), plan à droite (`#streetmap-container`, largeur fixe 160px, colonne empilée en dessous sur mobile).
+- Masqué entièrement tant qu'aucun resto n'est en phare : `.result-layout:has(#result-container:empty) { display: none; }` — pure CSS, s'appuie sur le cycle `innerHTML = ""` / rempli déjà existant, pas de nouvel état JS à gérer.
+- `main` élargi (480px → 640px) pour laisser respirer les deux colonnes.

@@ -25,7 +25,7 @@ body {
 }
 
 main {
-  max-width: 480px;
+  max-width: 640px;
   width: 100%;
   padding: 24px;
   text-align: center;
@@ -108,24 +108,51 @@ button:disabled {
   margin: 0 auto;
 }
 
-#streetmap-container {
-  margin-top: 16px;
-}
-
-.streetmap-svg {
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
-  background: transparent;
-}
-
-.result-card {
+/* One rectangular card holding both columns. Hidden entirely until a scan
+   populates #result-container — :has() lets plain CSS drive that, no JS
+   toggling needed on top of the existing innerHTML clear/fill cycle. */
+.result-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
+  text-align: left;
+}
+
+.result-layout:has(#result-container:empty) {
+  display: none;
+}
+
+#result-container {
+  flex: 1;
+  min-width: 0;
+}
+
+#streetmap-container {
+  flex-shrink: 0;
+  width: 160px;
+}
+
+.streetmap-svg {
+  display: block;
+  width: 100%;
+  background: transparent;
+}
+
+@media (max-width: 480px) {
+  .result-layout {
+    flex-direction: column;
+  }
+  #streetmap-container {
+    width: 100%;
+  }
+}
+
+.result-card {
   text-align: left;
 }
 
