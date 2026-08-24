@@ -48,3 +48,8 @@ Plus de pipeline n8n dédié, plus de nouvel onglet Google Sheet "Cartes", plus 
 - L'encart résultat devient un seul bloc rectangulaire (`.result-layout`) contenant deux colonnes : infos texte à gauche (`#result-container`, layout inchangé), plan à droite (`#streetmap-container`, largeur fixe 160px, colonne empilée en dessous sur mobile).
 - Masqué entièrement tant qu'aucun resto n'est en phare : `.result-layout:has(#result-container:empty) { display: none; }` — pure CSS, s'appuie sur le cycle `innerHTML = ""` / rempli déjà existant, pas de nouvel état JS à gérer.
 - `main` élargi (480px → 640px) pour laisser respirer les deux colonnes.
+
+## Addendum — mise à l'échelle + ligne décorative départ→resto
+
+- `main` réélargi (640px → 960px, largeur fluide 94%) et colonne carte en `clamp(180px, 32%, 340px)` plutôt qu'une largeur fixe — s'adapte à la taille d'écran au lieu de rester cantonné à une bande étroite.
+- Ligne pointillée décorative entre le repère de départ et le repère resto, mise à jour à chaque changement de resto phare. Purement esthétique — pas de tracé routier réel (tout se fait à pied, l'itinéraire précis reste sur le lien Google Maps).

@@ -70,23 +70,32 @@ export function createStreetMap(container, origin) {
   container.innerHTML = `
     <svg viewBox="0 0 ${VIEW_SIZE} ${VIEW_SIZE}" class="streetmap-svg">
       <g>${streetLines}</g>
+      <line class="streetmap-path" x1="${originPoint.x.toFixed(1)}" y1="${originPoint.y.toFixed(1)}" x2="${originPoint.x.toFixed(1)}" y2="${originPoint.y.toFixed(1)}" stroke="#fff8be" stroke-width="1.5" stroke-dasharray="4 3" stroke-opacity="0.8" style="display:none"/>
       <circle cx="${originPoint.x.toFixed(1)}" cy="${originPoint.y.toFixed(1)}" r="4" fill="#fbf192"/>
       <circle cx="${originPoint.x.toFixed(1)}" cy="${originPoint.y.toFixed(1)}" r="7" fill="none" stroke="#fbf192" stroke-opacity="0.6" stroke-width="1"/>
       <g class="streetmap-resto" style="display:none"></g>
     </svg>
   `;
 
+  const pathLine = container.querySelector(".streetmap-path");
   const restoGroup = container.querySelector(".streetmap-resto");
 
   function setRestaurant(lat, lon) {
     if (lat === null || lon === null) {
       restoGroup.style.display = "none";
+      pathLine.style.display = "none";
       return;
     }
     const { x, y } = project(lat, lon);
     restoGroup.setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})`);
     restoGroup.innerHTML = RINGED_PLANET_ICON;
     restoGroup.style.display = "";
+
+    // Straight decorative line only — everything here is walking distance,
+    // and the real itinerary is one click away via the Google Maps link.
+    pathLine.setAttribute("x2", x.toFixed(1));
+    pathLine.setAttribute("y2", y.toFixed(1));
+    pathLine.style.display = "";
   }
 
   return { setRestaurant };
